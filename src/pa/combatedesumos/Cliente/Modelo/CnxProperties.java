@@ -9,7 +9,7 @@ import java.util.Properties;
  * Clase encargada de cargar la configuracion del cliente desde el archivo
  * properties. Maneja tanto la configuracion de red como las tecnicas kimarite
  * por categoria.
- *
+ * PENDIENTE A DEFINIR COMO LO REALIZAMOS
  * @author Asus Sergio
  */
 public class CnxProperties {

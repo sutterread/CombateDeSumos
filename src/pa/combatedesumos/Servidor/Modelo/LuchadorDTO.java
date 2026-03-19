@@ -4,7 +4,7 @@ package pa.combatedesumos.Servidor.Modelo;
  *
  * @author Asus
  */
-public class Luchador {
+public class LuchadorDTO {
     
     private String nombre;
     private float peso;
@@ -18,7 +18,7 @@ public class Luchador {
      * @param combatesGanados
      * @param kimarites
      */
-    public Luchador(String nombre, float peso, int combatesGanados, String[] kimarites) {
+    public LuchadorDTO(String nombre, float peso, int combatesGanados, String[] kimarites) {
         this.nombre = nombre;
         this.peso = peso;
         this.combatesGanados = combatesGanados;

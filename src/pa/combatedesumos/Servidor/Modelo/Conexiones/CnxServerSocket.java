@@ -1,4 +1,4 @@
-package pa.combatedesumos.Servidor.Modelo;
+package pa.combatedesumos.Servidor.Modelo.Conexiones;
 
 import java.io.IOException;
 import java.net.ServerSocket;

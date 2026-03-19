@@ -9,7 +9,7 @@ import pa.combatedesumos.Cliente.Modelo.CnxSocket;
 /**
  * Control encargado de manejar la comunicacion del cliente con el servidor.
  * Envia los datos del luchador y espera el resultado del combate.
- *
+ * PENDIENTE A ARREGLAR
  * @author Asus
  */
 public class ControlCliente {
@@ -43,6 +43,7 @@ public class ControlCliente {
 
         dos.writeUTF(nombre);
         dos.writeFloat(peso);
+        //ARREGLAR ESTO DE COMBATES GANADOS 
         dos.writeInt(combatesGanados);
         dos.writeInt(kimarites.length);
 

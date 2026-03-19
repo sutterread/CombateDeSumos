@@ -4,7 +4,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import pa.combatedesumos.Servidor.Modelo.CnxServerSocket;
+import pa.combatedesumos.Servidor.Modelo.Conexiones.CnxServerSocket;
 
 /**
  * Clase encargada de gestionar el ServerSocket del servidor. Acepta exactamente
@@ -12,35 +12,36 @@ import pa.combatedesumos.Servidor.Modelo.CnxServerSocket;
  *
  * @author Asus
  */
-public class SContolSocket implements Runnable {
+public class ControlSocketServidor implements Runnable {
 
     private SControlPrincipal sControlPrincipal;
 
     private ServerSocket servidor;
     private boolean servidorActivo;
 
-    public SContolSocket(SControlPrincipal sControlPrincipal) {
+    public ControlSocketServidor(SControlPrincipal sControlPrincipal) {
         this.sControlPrincipal = sControlPrincipal;
         this.servidorActivo = true;
     }
 
     @Override
     public void run() {
-        try {
-            servidor = CnxServerSocket.conexion();
-            int contador = 0;
-            while (contador < 2) {
-                Socket sc = servidor.accept();
-                SHiloLuchador hilo = new SHiloLuchador(sc, sControlPrincipal);
-                new Thread(hilo, "Luchador-" + (contador + 1)).start();
-                contador++;
-            }
-        } catch (IOException ex) {
-            if (servidorActivo) {
-            }
-        } finally {
-            detenerServidor(); //cierre del serversocket
-        }
+        //PENDIENTE PARA RECIBIR COMO MINIMO 6 CONEXIONES
+//        try {
+//            servidor = CnxServerSocket.conexion();
+//            int contador = 0;
+//            while (contador < 2) {
+//                Socket sc = servidor.accept();
+//                SHiloLuchador hilo = new SHiloLuchador(sc, sControlPrincipal);
+//                new Thread(hilo, "Luchador-" + (contador + 1)).start();
+//                contador++;
+//            }
+//        } catch (IOException ex) {
+//            if (servidorActivo) {
+//            }
+//        } finally {
+//            detenerServidor(); //cierre del serversocket
+//        }
     }
 
     /**
