@@ -1,0 +1,54 @@
+========================================================
+ DESCRIPCIÓN DE LA BASE DE DATOS — PROYECTO COMBATEDESUMOS
+========================================================
+
+Nombre de la base de datos : sumo_db
+Motor de base de datos     : MySQL
+Puerto                     : 3306
+Host                       : localhost
+
+----------------------------------------------------------------
+HERRAMIENTAS Y VERSIONES NECESARIAS
+-------------------------------------
+- XAMPP                  v3.3.0 o superior  (gestor del entorno local)
+- Java JDK               17
+- Conector JDBC      mysql-connector-java-5.1.46.jar
+- NetBeans IDE        22
+
+--------------------------------------------------------
+ CREDENCIALES DE ACCESO
+--------------------------------------------------------
+Usuario    : root
+Contraseña : (vacía / sin contraseña)
+
+--------------------------------------------------------
+ TABLA: luchador
+--------------------------------------------------------
+Descripción: Almacena la información de cada luchador registrado en el sistema.
+
+Campos:
+    - id_luchador  INT           AUTO_INCREMENT  PK (mysql le asigna un id auto incremental y pk significa primary key)
+    - nombre       VARCHAR(100)  NOT NULL
+    - peso         DECIMAL(5,2)  NOT NULL
+    - victorias    INT           DEFAULT 0
+
+--------------------------------------------------------
+ SCRIPT DE CREACIÓN
+--------------------------------------------------------
+Ver archivo: Specs/sumo_db.sql
+
+El script incluye:
+  1. Creación de la base de datos  (CREATE DATABASE IF NOT EXISTS sumo_db)
+  2. Selección de la base de datos (USE sumo_db)
+  3. Creación de la tabla          (CREATE TABLE IF NOT EXISTS luchador)
+  4. Datos de ejemplo              (INSERT INTO luchador...)
+
+--------------------------------------------------------
+ CONFIGURACIÓN EN ARCHIVO PROPERTIES
+--------------------------------------------------------
+El archivo data/db.properties contiene las claves:
+  db.URLDB=jdbc:mysql://localhost:3306/sumo_db
+  db.usuario=root
+  db.contrasena=
+
+========================================================
