@@ -15,14 +15,14 @@ import pa.combatedesumos.Cliente.Modelo.CnxSocket;
 public class ControlSocketCliente {
 
     private CnxSocket cnxSocket;
-    private CControlPrincipal ccp;
+    private ControlPrincipal ccp;
 
     /**
      * Constructor de ControlSocketCliente
      *
      * @param ccp
      */
-    public ControlSocketCliente(CControlPrincipal ccp) {
+    public ControlSocketCliente(ControlPrincipal ccp) {
         this.ccp = ccp;
         this.cnxSocket = new CnxSocket();
     }

@@ -11,7 +11,7 @@ import java.net.Socket;
  *
  * @author Asus
  */
-public class SHiloLuchador implements Runnable {
+public class HiloLuchador implements Runnable {
 
     /**
      * Socket de conexion con el cliente
@@ -20,7 +20,7 @@ public class SHiloLuchador implements Runnable {
     /**
      * Control principal del servidor
      */
-    private SControlPrincipal cControlPrincipal;
+    private SrvControlPrincipal cControlPrincipal;
 
     private DataInputStream input;
     private DataOutputStream output;
@@ -30,7 +30,7 @@ public class SHiloLuchador implements Runnable {
      * @param socket
      * @param cControlPrincipal
      */
-    public SHiloLuchador(Socket socket, SControlPrincipal cControlPrincipal) {
+    public HiloLuchador(Socket socket, SrvControlPrincipal cControlPrincipal) {
         this.socket = socket;
         this.cControlPrincipal = cControlPrincipal;
     }

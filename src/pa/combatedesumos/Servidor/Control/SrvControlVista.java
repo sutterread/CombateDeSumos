@@ -10,12 +10,12 @@ import pa.combatedesumos.Servidor.Vista.SeleccionarArchivo;
  *
  * @author Asus
  */
-public class SControlVista implements ActionListener {
+public class SrvControlVista implements ActionListener {
 
     /**
      * Control principal del servidor
      */
-    private SControlPrincipal controlPrincipal;
+    private SrvControlPrincipal controlPrincipal;
     
     private final SeleccionarArchivo seleccionarArchivo;
 
@@ -24,7 +24,7 @@ public class SControlVista implements ActionListener {
      *
      * @param controlPrincipal control principal del servidor
      */
-    public SControlVista(SControlPrincipal controlPrincipal) {
+    public SrvControlVista(SrvControlPrincipal controlPrincipal) {
         this.controlPrincipal = controlPrincipal;
         this.seleccionarArchivo = new SeleccionarArchivo();
     }

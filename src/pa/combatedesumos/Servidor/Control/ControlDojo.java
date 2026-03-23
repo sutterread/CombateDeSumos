@@ -11,14 +11,14 @@ import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
  */
 public class ControlDojo {
 
-    private SControlPrincipal sControlPrincipal;
+    private SrvControlPrincipal sControlPrincipal;
     
     /**
      * Constructor de ControlDojo.
      *
      * @param sControlPrincipal control principal del servidor
      */
-    public ControlDojo(SControlPrincipal sControlPrincipal) {
+    public ControlDojo(SrvControlPrincipal sControlPrincipal) {
         this.sControlPrincipal = sControlPrincipal;
     }
     

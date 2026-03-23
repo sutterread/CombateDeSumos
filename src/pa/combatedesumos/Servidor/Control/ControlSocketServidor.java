@@ -14,12 +14,12 @@ import pa.combatedesumos.Servidor.Modelo.Conexiones.CnxServerSocket;
  */
 public class ControlSocketServidor implements Runnable {
 
-    private SControlPrincipal sControlPrincipal;
+    private SrvControlPrincipal sControlPrincipal;
 
     private ServerSocket servidor;
     private boolean servidorActivo;
 
-    public ControlSocketServidor(SControlPrincipal sControlPrincipal) {
+    public ControlSocketServidor(SrvControlPrincipal sControlPrincipal) {
         this.sControlPrincipal = sControlPrincipal;
         this.servidorActivo = true;
     }

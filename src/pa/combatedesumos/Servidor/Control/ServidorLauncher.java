@@ -7,7 +7,7 @@ package pa.combatedesumos.Servidor.Control;
 public class ServidorLauncher {
 
     public static void main(String[] args) {
-        new SControlPrincipal();
+        new SrvControlPrincipal();
     }
 
 }

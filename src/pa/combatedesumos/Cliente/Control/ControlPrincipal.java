@@ -1,13 +1,13 @@
 package pa.combatedesumos.Cliente.Control;
 
 
-public class CControlPrincipal {
+public class ControlPrincipal {
 
-    private CControlVista cControlVista;
+    private ControlVista cControlVista;
     private ControlSocketCliente controlCliente;
 
-    public CControlPrincipal() {
-        cControlVista = new CControlVista(this);
+    public ControlPrincipal() {
+        cControlVista = new ControlVista(this);
         controlCliente = new ControlSocketCliente(this);
     }
 }

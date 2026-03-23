@@ -9,16 +9,16 @@ import java.awt.event.ActionListener;
  *
  * @author Asus
  */
-public class CControlVista implements ActionListener {
+public class ControlVista implements ActionListener {
 
-    private CControlPrincipal controlPrincipal;
+    private ControlPrincipal controlPrincipal;
 
     /**
      * Constructor de CControlVista.
      *
      * @param controlPrincipal control principal del cliente
      */
-    public CControlVista(CControlPrincipal controlPrincipal) {
+    public ControlVista(ControlPrincipal controlPrincipal) {
         this.controlPrincipal = controlPrincipal;
     }
 

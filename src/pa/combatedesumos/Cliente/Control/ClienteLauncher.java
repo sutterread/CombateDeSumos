@@ -7,7 +7,7 @@ package pa.combatedesumos.Cliente.Control;
 public class ClienteLauncher {
 
     public static void main(String[] args) {
-        new CControlPrincipal();
+        new ControlPrincipal();
     }
 
 }

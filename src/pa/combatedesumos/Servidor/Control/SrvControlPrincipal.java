@@ -9,17 +9,17 @@ import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
  *
  * @author Asus
  */
-public class SControlPrincipal {
+public class SrvControlPrincipal {
 
-    private SControlVista sControlVista;
+    private SrvControlVista sControlVista;
     private ControlDojo controlDojo;
     private ControlSocketServidor sControlSocket;
     private ControlLuchador controlLuchador;
 
-    public SControlPrincipal() {
+    public SrvControlPrincipal() {
         controlLuchador = new ControlLuchador(this);
         controlDojo = new ControlDojo(this);
-        sControlVista = new SControlVista(this);
+        sControlVista = new SrvControlVista(this);
         sControlSocket = new ControlSocketServidor(this);
     }
     

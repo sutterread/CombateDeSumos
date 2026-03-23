@@ -8,9 +8,9 @@ import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
  */
 public class ControlLuchador {
     
-    private SControlPrincipal sControlPrincipal;
+    private SrvControlPrincipal sControlPrincipal;
     
-    public ControlLuchador(SControlPrincipal sControlPrincipal) {
+    public ControlLuchador(SrvControlPrincipal sControlPrincipal) {
         this.sControlPrincipal = sControlPrincipal;
     }
 }
