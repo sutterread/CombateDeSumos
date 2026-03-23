@@ -6,26 +6,28 @@ package pa.combatedesumos.Servidor.Modelo;
  */
 public class LuchadorDTO {
     
+    private int idLuchador;
     private String nombre;
-    private float peso;
-    private int combatesGanados;
+    private double peso;
+    private int victorias;
     private String[] kimarites;
 
-    /**
-     * Constructor del luchador
-     * @param nombre
-     * @param peso
-     * @param combatesGanados
-     * @param kimarites
-     */
-    public LuchadorDTO(String nombre, float peso, int combatesGanados, String[] kimarites) {
+    public LuchadorDTO(int idLuchador, String nombre, double peso, int victorias, String[] kimarites) {
+        this.idLuchador = idLuchador;
         this.nombre = nombre;
         this.peso = peso;
-        this.combatesGanados = combatesGanados;
+        this.victorias = victorias;
         this.kimarites = kimarites;
     }
 
-    //getters y setters normales
+    public int getIdLuchador() {
+        return idLuchador;
+    }
+
+    public void setIdLuchador(int idLuchador) {
+        this.idLuchador = idLuchador;
+    }
+
     public String getNombre() {
         return nombre;
     }
@@ -34,20 +36,20 @@ public class LuchadorDTO {
         this.nombre = nombre;
     }
 
-    public float getPeso() {
+    public double getPeso() {
         return peso;
     }
 
-    public void setPeso(float peso) {
+    public void setPeso(double peso) {
         this.peso = peso;
     }
 
-    public int getCombatesGanados() {
-        return combatesGanados;
+    public int getVictorias() {
+        return victorias;
     }
 
-    public void setCombatesGanados(int combatesGanados) {
-        this.combatesGanados = combatesGanados;
+    public void setVictorias(int victorias) {
+        this.victorias = victorias;
     }
 
     public String[] getKimarites() {

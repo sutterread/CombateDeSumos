@@ -15,7 +15,7 @@ import java.util.Properties;
  * Las credenciales se almacenan en atributos estáticos para que puedan
  * ser utilizadas en cualquier parte de la aplicación.
  *
- * @author Valen Aguilar
+ * @author Asus
  */
 public class CnxBD {
 
