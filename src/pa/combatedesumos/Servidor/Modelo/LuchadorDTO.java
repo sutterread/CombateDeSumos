@@ -12,13 +12,22 @@ public class LuchadorDTO {
     private int victorias;
     private String[] kimarites;
 
+    // Para cuando se crea nuevo (sin ID, lo asigna la BD)
+    public LuchadorDTO(String nombre, double peso, int victorias, String[] kimarites) {
+    this.nombre = nombre;
+    this.peso = peso;
+    this.victorias=victorias;
+    this.kimarites=kimarites;
+}
+
+    // Para cuando se trae de la BD (con ID ya asignado)
     public LuchadorDTO(int idLuchador, String nombre, double peso, int victorias, String[] kimarites) {
-        this.idLuchador = idLuchador;
-        this.nombre = nombre;
-        this.peso = peso;
-        this.victorias = victorias;
-        this.kimarites = kimarites;
-    }
+    this.idLuchador = idLuchador;
+    this.nombre = nombre;
+    this.peso = peso;
+    this.victorias=victorias;
+    this.kimarites=kimarites;
+}
 
     public int getIdLuchador() {
         return idLuchador;
