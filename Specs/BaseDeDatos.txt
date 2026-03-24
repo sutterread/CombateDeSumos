@@ -27,10 +27,11 @@ Contraseña : (vacía / sin contraseña)
 Descripción: Almacena la información de cada luchador registrado en el sistema.
 
 Campos:
-    - id_luchador  INT           AUTO_INCREMENT  PK (mysql le asigna un id auto incremental y pk significa primary key)
-    - nombre       VARCHAR(100)  NOT NULL
-    - peso         DECIMAL(5,2)  NOT NULL
-    - victorias    INT           DEFAULT 0
+    - id_luchador  INT                     AUTO_INCREMENT  PK (mysql le asigna un id auto incremental y pk significa primary key)
+    - nombre        VARCHAR(100)  NOT NULL
+    - peso            DECIMAL(5,2)    NOT NULL
+    - victorias       INT                     DEFAULT 0
+    - kimarites      TEXT                  NOT NULL
 
 --------------------------------------------------------
  SCRIPT DE CREACIÓN

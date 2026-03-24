@@ -30,7 +30,7 @@ public class CnxSocket {
      *
      * @return socket
      */
-    public Socket conexion() {
+    public static Socket conexion() {
         if (socket != null && socket.isConnected() && !socket.isClosed()) {
             return socket;
         }
@@ -54,6 +54,7 @@ public class CnxSocket {
             socket.close();
         } catch (IOException ioe) {
             throw new RuntimeException("Error al cerrar el socket.", ioe);
+            //liveracion de recursos por eso no se extiende
         }
     }
 

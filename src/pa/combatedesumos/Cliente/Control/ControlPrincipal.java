@@ -3,11 +3,11 @@ package pa.combatedesumos.Cliente.Control;
 
 public class ControlPrincipal {
 
-    private ControlVista cControlVista;
-    private ControlSocketCliente controlCliente;
+    private ControlVista controlVista;
+    private ControlSocketCliente controlSocketCliente;
 
     public ControlPrincipal() {
-        cControlVista = new ControlVista(this);
-        controlCliente = new ControlSocketCliente(this);
+        controlVista = new ControlVista(this);
+        controlSocketCliente = new ControlSocketCliente(this);
     }
 }

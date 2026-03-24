@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 22, 2026 at 08:29 PM
+-- Generation Time: Mar 23, 2026 at 02:10 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,7 +31,8 @@ CREATE TABLE `luchador` (
   `id_luchador` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
   `peso` decimal(5,2) NOT NULL,
-  `victorias` int(11) DEFAULT 0
+  `victorias` int(11) DEFAULT 0,
+  `kimarites` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
