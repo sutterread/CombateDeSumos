@@ -1,5 +1,7 @@
 package pa.combatedesumos.Servidor.Control;
 
+import java.util.ArrayList;
+import java.util.List;
 import pa.combatedesumos.Servidor.Modelo.DAO.LuchadorDAO;
 import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
 
@@ -12,6 +14,7 @@ public class ControlLuchador {
     
     private SrvControlPrincipal sControlPrincipal;
     private LuchadorDTO luchador;
+    private List<LuchadorDTO> luchadores;
     private LuchadorDAO ldao;
     
     /**
@@ -20,6 +23,7 @@ public class ControlLuchador {
      */
     public ControlLuchador(SrvControlPrincipal sControlPrincipal) {
         this.sControlPrincipal = sControlPrincipal;
+        this.luchadores = new ArrayList<>();
         this.ldao=new LuchadorDAO(this);
     }
     /**
@@ -63,7 +67,9 @@ public class ControlLuchador {
         ldao.modificarVictorias(luchador);
     }
     
-    
+    public List<LuchadorDTO> getLuchadores(){
+        return luchadores;
+    }
     
     
 }
