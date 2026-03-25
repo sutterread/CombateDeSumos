@@ -26,6 +26,11 @@ public class CnxProperties {
         return props;
     }
     
+    /**
+     * Recibe la ruta del properies y extrae la propiedad del puerto servidor parseandola
+     * @param ruta
+     * @throws IOException
+     */
     public static void cargaConfioguracion(String ruta) throws IOException{
         Properties props = cargarProps(ruta);
         puerto = Integer.parseInt(props.getProperty("PUERTO_SERVIDOR"));

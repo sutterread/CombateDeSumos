@@ -27,7 +27,7 @@ public class ControlLuchador {
     }
     
     public void insertarLuchadorEnBD(String nombre, double peso, int victorias, String[] kimarites){
-        luchador= new LuchadorDTO(nombre, peso, victorias, kimarites);
+        luchador = new LuchadorDTO(nombre, peso, victorias, kimarites);
         ldao.insertarLuchador(luchador);
     }
     

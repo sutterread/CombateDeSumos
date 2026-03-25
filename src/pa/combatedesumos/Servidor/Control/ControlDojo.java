@@ -1,7 +1,6 @@
 package pa.combatedesumos.Servidor.Control;
 
-import java.util.concurrent.ThreadLocalRandom;
-import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
+
 
 /**
  * Control encargado de gestionar la logica del combate en el dojo. Sincroniza
