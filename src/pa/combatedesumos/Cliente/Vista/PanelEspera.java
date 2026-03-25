@@ -27,7 +27,8 @@ public class PanelEspera extends javax.swing.JPanel {
     private void initComponents() {
 
         jButton1Salir = new javax.swing.JButton();
-        jPanel1 = new PanelFondo("Imgs/Cliente/EsperandoAIniciarCombate.png");
+        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new PanelFondo("Imgs/Cliente/Esperando.png");
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -42,6 +43,9 @@ public class PanelEspera extends javax.swing.JPanel {
             }
         });
         add(jButton1Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 350, 90, 40));
+
+        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\USUARIO\\Documents\\CombateDeSumos\\Imgs\\Esperando.png")); // NOI18N
+        add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 600, 400));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -64,6 +68,7 @@ public class PanelEspera extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton jButton1Salir;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
