@@ -168,7 +168,7 @@ public class ControlVista implements ActionListener {
     }
 
     /**
-     * Cambia la vista al panel de combatiendo (cuando el combate esta activo).
+     * Cambia la vista al panel de combatiendo (cuando el combate está activo).
      */
     public void mostrarPanelCombatiendo() {
         cambiarPanel(panelCombatiendo);

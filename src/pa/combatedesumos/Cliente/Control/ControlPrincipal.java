@@ -86,7 +86,7 @@ public class ControlPrincipal {
     /**
      * Valida los datos, envia al luchador al servidor y luego espera el
      * resultado del combate en un hilo de fondo para no bloquear la UI.
-     * Cambia al PanelEspera tras recibir la confirmacion y al
+     * Cambia al PanelEspera tras recibir la confirmación y al
      * PanelCombatiendo cuando llega el resultado final.
      *
      * @param nombre nombre del luchador
@@ -109,7 +109,7 @@ public class ControlPrincipal {
             return;
         }
         try {
-            // Enviar datos y recibir confirmacion "RECIBIDO" (sincronico)
+            // Enviar datos y recibir confirmación "RECIBIDO" (sincrónico)
             controlCliente.enviarLuchador(nombre, pesoFloat, tecnicasSeleccionadas);
             // Datos recibidos correctamente — mostrar pantalla de espera
             cControlVista.mostrarPanelEspera();
@@ -127,7 +127,7 @@ public class ControlPrincipal {
                 });
             } catch (IOException ex) {
                 SwingUtilities.invokeLater(() ->
-                    cControlVista.mostrarAdvertencia("Se perdio la conexion con el servidor.")
+                    cControlVista.mostrarAdvertencia("Se perdió la conexión con el servidor.")
                 );
             }
         }, "HiloEsperaResultado").start();

@@ -28,12 +28,12 @@ public class ControlSocketCliente {
 
     /**
      * Envia los datos del luchador al servidor por el socket y espera la
-     * confirmacion "RECIBIDO" antes de retornar.
+     * confirmación "RECIBIDO" antes de retornar.
      *
      * @param nombre    nombre del luchador
      * @param peso      peso del luchador (float)
-     * @param kimarites tecnicas seleccionadas
-     * @throws IOException si hay error de conexion o confirmacion inesperada
+     * @param kimarites técnicas seleccionadas
+     * @throws IOException si hay error de conexion o confirmación inesperada
      */
     public void enviarLuchador(String nombre, float peso, String[] kimarites) throws IOException {
         DataOutputStream dos = new DataOutputStream(CnxSocket.conexion().getOutputStream());
@@ -48,10 +48,10 @@ public class ControlSocketCliente {
 
         dos.flush();
 
-        // Esperar confirmacion del servidor
-        String confirmacion = getInputStream().readUTF();
-        if (!"RECIBIDO".equals(confirmacion)) {
-            throw new IOException("Confirmacion inesperada del servidor: " + confirmacion);
+        // Esperar confirmación del servidor
+        String confirmación = getInputStream().readUTF();
+        if (!"RECIBIDO".equals(confirmación)) {
+            throw new IOException("Confirmación inesperada del servidor: " + confirmación);
         }
     }
 
