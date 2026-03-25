@@ -110,27 +110,27 @@ public class SrvControlPrincipal {
      * @param ganador  luchador ganador con datos frescos de BD
      * @param perdedor luchador perdedor con datos frescos de BD
      */
-//    public void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
-//        try {
-//            RAFDAO.escribirResultado(ganador, "GANO");
-//            RAFDAO.escribirResultado(perdedor, "PERDIO");
-//            controlDojo.getHilos().get(ganador.getIdLuchador()).enviarResultado("GANASTE");
-//            controlDojo.getHilos().get(perdedor.getIdLuchador()).enviarResultado("PERDISTE");
-//        } catch (IOException e) {
-//            mostrarError("Error al finalizar combate: " + e.getMessage());
-//        }
-//    }
-//
-//    /**
-//     * Lee el archivo RAF y muestra los resultados por consola.
-//     */
-//    public void mostrarArchivoFinal() {
-//        try {
-//            RAFDAO.leerTodos();
-//        } catch (IOException e) {
-//            mostrarError("Error al leer archivo final: " + e.getMessage());
-//        }
-//    }
+    public void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
+        try {
+            RAFDAO.escribirResultado(ganador, "GANO");
+            RAFDAO.escribirResultado(perdedor, "PERDIO");
+            controlDojo.getHilos().get(ganador.getIdLuchador()).enviarResultado("GANASTE");
+            controlDojo.getHilos().get(perdedor.getIdLuchador()).enviarResultado("PERDISTE");
+        } catch (IOException e) {
+            mostrarError("Error al finalizar combate: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Lee el archivo RAF y muestra los resultados por consola.
+     */
+    public void mostrarArchivoFinal() {
+        try {
+            RAFDAO.leerTodos();
+        } catch (IOException e) {
+            mostrarError("Error al leer archivo final: " + e.getMessage());
+        }
+    }
 
     /**
      * Actualiza el panel del dojo en la vista.

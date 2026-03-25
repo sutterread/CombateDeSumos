@@ -52,8 +52,9 @@ public class ControlDojo {
     }
 
     /**
-     * Primero valida si hay 6 luchadores para pelear
-     * Selecciona los dos luchadores y ejecuta el combate entre ellos
+     * Primero valida si hay 6 luchadores para pelear Selecciona los dos
+     * luchadores y ejecuta el combate entre ellos
+     *
      * @param luchadores
      */
     public void iniciarTorneo(List<LuchadorDTO> luchadores) {
@@ -68,17 +69,20 @@ public class ControlDojo {
         ejecutarCombate(a, b);
     }
 
-       /**
-        *  Selecciona un luchador dentro de la lista
-        * @return borra el luchador seleccionado
-        */
+    /**
+     * Selecciona un luchador dentro de la lista
+     *
+     * @return borra el luchador seleccionado
+     */
     private LuchadorDTO seleccionarLuchador() {
         int indice = random.nextInt(pendientes.size());
         return pendientes.remove(indice);
     }
 
     /**
-     *  Ejecuta el combate entre los luchadores seleccionados ejecutando kimaries y variando sus turnos
+     * Ejecuta el combate entre los luchadores seleccionados ejecutando kimaries
+     * y variando sus turnos
+     *
      * @param Luchador a
      * @param Luchador b
      */
@@ -107,10 +111,11 @@ public class ControlDojo {
         LuchadorDTO ganador = dentroA ? a : b;
         LuchadorDTO perdedor = dentroA ? b : a;
         finalizarCombate(ganador, perdedor);
-    }   
-    
+    }
+
     /**
-     *  Ejecuta un kimarite aleatorio del arreglo de kimarites del luchador
+     * Ejecuta un kimarite aleatorio del arreglo de kimarites del luchador
+     *
      * @param luchador
      * @return Probabilidad
      */
@@ -124,14 +129,13 @@ public class ControlDojo {
     }
 
     /**
-     * Delega a cp para sumar una victoria aal ganador 
-     * obtiene la pk de cada luchador el ganador y el perdedor
-     * delega a cp para terminar el combate
-     * 
-     * Realiza el siguiente combate
-     * Delega a cp para mostrarelRAF final
+     * Delega a cp para sumar una victoria aal ganador obtiene la pk de cada
+     * luchador el ganador y el perdedor delega a cp para terminar el combate
+     *
+     * Realiza el siguiente combate Delega a cp para mostrarelRAF final
+     *
      * @param ganador
-     * @param perdedor 
+     * @param perdedor
      */
     private void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
         // actualizar victorias
@@ -153,5 +157,14 @@ public class ControlDojo {
             srvControlPrincipal.mostrarArchivoFinal();
         }
 
+    }
+
+    /**
+     * Retorna el mapa de hilos activos.
+     *
+     * @return mapa de hilos
+     */
+    public Map<Integer, HiloLuchador> getHilos() {
+        return hilos;
     }
 }
