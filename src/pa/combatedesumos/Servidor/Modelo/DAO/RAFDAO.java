@@ -1,9 +1,42 @@
 package pa.combatedesumos.Servidor.Modelo.DAO;
 
+import java.awt.List;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import pa.combatedesumos.Servidor.Modelo.Conexiones.CnxRAF;
+import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
+
 /**
  *
- * @author Asus
+ * @author Sergio Vanegas
  */
 public class RAFDAO {
+    private File archivo;
     
+    public void añadirLuchador(LuchadorDTO luchador, String resultado) {
+        try {
+            RandomAccessFile raf = CnxRAF.conexion();
+            raf.seek(raf.length());
+            raf.writeUTF(luchador.getNombre());
+            raf.writeDouble(luchador.getPeso());
+            raf.writeInt(luchador.getVictorias());
+            raf.writeUTF(resultado); // "GANADOR" o "PERDEDOR" — lo decide el Control
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar en RAF", e);
+        }
+    }
+    
+    public void escribirSeparador() {
+        try {
+            RandomAccessFile raf = CnxRAF.conexion();
+            raf.seek(raf.length());
+            raf.writeUTF("--------------------------------");
+        } catch (IOException e) {
+            throw new RuntimeException("Error al escribir separador", e);
+        }
+    }
+    
+  
 }
