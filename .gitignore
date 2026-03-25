@@ -1,0 +1,16 @@
+# Archivos compilados
+build/
+dist/
+*.class
+*.jar
+
+# NetBeans
+nbproject/private/
+nbproject/Makefile-*.mk
+nbproject/Package-*.bash
+nbbuild/
+nbdist/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
