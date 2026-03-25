@@ -130,6 +130,7 @@ public class PanelDojo extends javax.swing.JPanel implements IGifSincronizado {
         Jugador1 = new javax.swing.JTextField();
         Jugador2 = new javax.swing.JTextField();
         Gifs = new javax.swing.JLabel();
+        jPanel1 = new PanelFondo("Imgs/Servidor/Combate.png");
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -157,6 +158,7 @@ public class PanelDojo extends javax.swing.JPanel implements IGifSincronizado {
         });
         add(Jugador2, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 70, 230, 70));
         add(Gifs, new org.netbeans.lib.awtextra.AbsoluteConstraints(258, 230, 410, 270));
+        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 600));
     }// </editor-fold>//GEN-END:initComponents
 
     private void Jugador1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Jugador1ActionPerformed
@@ -172,5 +174,6 @@ public class PanelDojo extends javax.swing.JPanel implements IGifSincronizado {
     public javax.swing.JLabel Gifs;
     public javax.swing.JTextField Jugador1;
     public javax.swing.JTextField Jugador2;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
