@@ -38,14 +38,12 @@ public class SrvControlPrincipal {
     }
 
     /**
-     * Obtiene el panel dojo de la vista. SOLO para inicializar ControlDojo.
+     * Obtiene el panel dojo de la vista.
      *
      * @return panel dojo
      */
     private PanelDojo obtenerPanelDojo() {
-        // Implementar mediante reflexión o getter en SrvControlVista
-        // Por ahora, se asume que está accesible
-        return null; // TODO: Implementar correctamente
+        return srvControlVista.getPanelDojo();
     }
 
     /**
@@ -88,11 +86,11 @@ public class SrvControlPrincipal {
     }
 
     /**
-     * Inicia el torneo.
+     * Inicia el torneo en un hilo de fondo para no bloquear el EDT.
      */
     public void iniciarTorneo() {
         srvControlVista.cambiarAlPanelCombate();
-        controlDojo.iniciarTorneo(controlLuchador.getLuchadores());
+        new Thread(() -> controlDojo.iniciarTorneo(controlLuchador.getLuchadores())).start();
     }
 
     /**
@@ -122,8 +120,7 @@ public class SrvControlPrincipal {
      */
     public void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
         try {
-            RAFDAO.escribirResultado(ganador, "GANO");
-            RAFDAO.escribirResultado(perdedor, "PERDIO");
+            RAFDAO.escribirCombate(ganador, perdedor);
 
             HiloLuchador hiloGanador = controlDojo.getHilos().get(ganador.getIdLuchador());
             HiloLuchador hiloPerdedor = controlDojo.getHilos().get(perdedor.getIdLuchador());

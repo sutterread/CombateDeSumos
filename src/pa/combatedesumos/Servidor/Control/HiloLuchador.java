@@ -41,7 +41,7 @@ public class HiloLuchador implements Runnable {
 
             // Fase 1 — recibir datos del cliente
             String nombre = input.readUTF();
-            double peso = input.readDouble();
+            double peso = input.readFloat();   // cliente envía float (4 bytes)
             int cantidadTecnicas = input.readInt();
             String[] tecnicas = new String[cantidadTecnicas];
             
@@ -51,6 +51,10 @@ public class HiloLuchador implements Runnable {
 
             // Registrar luchador (SIN System.out)
             srvControlPrincipal.registrarLuchador(nombre, peso, tecnicas, this);
+
+            // Confirmación de recepción al cliente
+            output.writeUTF("RECIBIDO");
+            output.flush();
 
             // Fase 2 — esperar resultado
             synchronized (this) {

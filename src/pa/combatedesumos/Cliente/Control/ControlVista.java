@@ -152,6 +152,14 @@ public class ControlVista implements ActionListener {
     }
 
     /**
+     * Cambia al panel de espera del combate.
+     * Se llama tras recibir la confirmacion "RECIBIDO" del servidor.
+     */
+    public void mostrarPanelEspera() {
+        cambiarPanel(panelEspera);
+    }
+
+    /**
      * Muestra el resultado del combate al usuario.
      *
      * @param resultado "GANASTE" o "PERDISTE"

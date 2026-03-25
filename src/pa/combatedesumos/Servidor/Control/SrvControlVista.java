@@ -110,6 +110,15 @@ public class SrvControlVista implements ActionListener {
     
     
     /**
+     * Retorna el panel dojo para que ControlDojo pueda usarlo.
+     *
+     * @return panel dojo
+     */
+    public PanelDojo getPanelDojo() {
+        return panelDojo;
+    }
+
+    /**
      * Abre el selector de archivo properties.
      *
      * @param titulo título del diálogo
