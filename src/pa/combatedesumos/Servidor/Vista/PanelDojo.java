@@ -6,84 +6,117 @@ import java.awt.image.ImageObserver;
 import java.io.File;
 import java.net.URL;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import pa.combatedesumos.Servidor.Control.SrvControlVista;
 
 /**
- *
+ * Panel que muestra el dohyō y sincroniza los GIFs de los kimarites.
+ * 
  * @author VALEN
  */
-public class PanelDojo extends javax.swing.JPanel {
+public class PanelDojo extends javax.swing.JPanel implements IGifSincronizado {
+    
     private SrvControlVista controlVista;
-    /**
-     * Creates new form PanelPrincipal
-     */
+    private JLabel gifActual;
+    private volatile boolean gifTerminado = false;
+    private volatile boolean gifActivo = false;
+    
     public PanelDojo(SrvControlVista controlVista) {
         this.controlVista = controlVista;
         initComponents();
     }
-    
     /**
- * Actualiza el mensaje de estado del combate
- * @param mensaje mensaje a mostrar
- */
-public void actualizarMensaje(String mensaje) {
-    SwingUtilities.invokeLater(() -> {
-        // Aquí puedes actualizar componentes del panel si es necesario
-        System.out.println(mensaje);
-    });
-}
-    
-    public boolean cargarGifAleatorio() {
-
-    // 1. Buscar los GIFs en la carpeta IMGS/GIFS
-    URL carpetaUrl = getClass().getResource("/Imgs/Gifs/Tecnicas");
-
-    File carpetaGifs = new File(carpetaUrl.getPath());
-    File[] archivos = carpetaGifs.listFiles(
-        (dir, nombre) -> nombre.toLowerCase().endsWith(".gif")
-    );
-
-    // 2. Seleccionar uno al azar
-    int indice = (int) (Math.random() * archivos.length);
-    File gifElegido = archivos[indice];
-
-    // 3. Escalar al tamaño del panel
-    ImageIcon gifOriginal = new ImageIcon(gifElegido.getAbsolutePath());
-
-    int ancho = 258;
-    int alto  = 230;
-
-    Image gifEscalado = gifOriginal.getImage()
-            .getScaledInstance(ancho, alto, Image.SCALE_DEFAULT);
-
-    ImageIcon gifIconFinal = new ImageIcon(gifEscalado);
-
-    // 4. Asignar al label
-    Gifs.setIcon(gifIconFinal);
-    Gifs.setHorizontalAlignment(SwingConstants.CENTER);
-    Gifs.setVerticalAlignment(SwingConstants.CENTER);
-
-    // 5. Detectar cuando el GIF termina (último frame)
-    gifIconFinal.setImageObserver(new ImageObserver() {
-        private int ultimoFrame = -1;
-
-        @Override
-        public boolean imageUpdate(Image img, int infoflags,
-                                   int x, int y, int width, int height) {
-
-            if ((infoflags & ImageObserver.ALLBITS) != 0) {
-                // GIF terminó de reproducirse
-                //SwingUtilities.invokeLater(() -> alTerminarGif());
-                return false; // dejar de observar
+     * Reproduce un GIF y espera a que termine completamente
+     * @param rutaGif ruta del GIF
+     * @param alTerminar callback cuando termine
+     */
+    @Override
+    public void reproducirGifYEsperar(String rutaGif, Runnable alTerminar) {
+        SwingUtilities.invokeLater(() -> {
+            try {
+                gifTerminado = false;
+                gifActivo = true;
+                
+                // Cargar GIF
+                URL recursoUrl = getClass().getResource(rutaGif);
+                if (recursoUrl == null) {
+                    gifActivo = false;
+                    gifTerminado = true;
+                    if (alTerminar != null) alTerminar.run();
+                    return;
+                }
+                
+                ImageIcon gifIcon = new ImageIcon(recursoUrl);
+                
+                // Detectar fin del GIF
+                gifIcon.setImageObserver(new ImageObserver() {
+                    private boolean seEjecuto = false;
+                    
+                    @Override
+                    public boolean imageUpdate(Image img, int infoflags, 
+                            int x, int y, int width, int height) {
+                        if ((infoflags & ImageObserver.FRAMEBITS) != 0) {
+                            seEjecuto = true;
+                        }
+                        if ((infoflags & ImageObserver.ALLBITS) != 0 && seEjecuto) {
+                            // GIF terminó
+                            gifTerminado = true;
+                            gifActivo = false;
+                            if (alTerminar != null) {
+                                SwingUtilities.invokeLater(alTerminar);
+                            }
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+                
+                // Mostrar GIF
+                Gifs.setIcon(gifIcon);
+                Gifs.setHorizontalAlignment(SwingConstants.CENTER);
+                
+            } catch (Exception e) {
+                gifActivo = false;
+                gifTerminado = true;
+                if (alTerminar != null) alTerminar.run();
             }
-            return true; // seguir observando
-        }
-    });
+        });
+    }
 
-    return true; // GIF cargado exitosamente
-}
+    /**
+     * Detiene el GIF actual
+     */
+    @Override
+    public void detenerGif() {
+        SwingUtilities.invokeLater(() -> {
+            gifActivo = false;
+            gifTerminado = true;
+            if (Gifs != null) {
+                Gifs.setIcon(null);
+            }
+        });
+    }
+
+    /**
+     * Actualiza los nombres de los combatientes
+     */
+    public void actualizarCombatientes(String luchador1, String luchador2) {
+        SwingUtilities.invokeLater(() -> {
+            Jugador1.setText(luchador1);
+            Jugador2.setText(luchador2);
+        });
+    }
+
+    /**
+     * Actualiza el mensaje del combate
+     */
+    public void actualizarMensaje(String mensaje) {
+        SwingUtilities.invokeLater(() -> {
+            // Implementar según el panel
+        });
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -7,49 +7,49 @@ import pa.combatedesumos.Servidor.Modelo.Conexiones.CnxProperties;
 import pa.combatedesumos.Servidor.Modelo.Conexiones.CnxServerSocket;
 import pa.combatedesumos.Servidor.Modelo.DAO.RAFDAO;
 import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
+import pa.combatedesumos.Servidor.Vista.PanelDojo;
 
 /**
- * Control principal del servidor. Coordina todos los controles secundarios y
- * actúa como punto central de comunicación entre ellos.
+ * Control principal del servidor. Coordina todos los controles secundarios.
+ * Punto central de comunicación entre capas.
  *
  * @author Asus
  */
 public class SrvControlPrincipal {
 
-    /**
-     * Control de la vista del servidor.
-     */
     private SrvControlVista srvControlVista;
-
-    /**
-     * Control del dojo.
-     */
     private ControlDojo controlDojo;
-
-    /**
-     * Control del servidor socket.
-     */
     private ControlSocketServidor controlSocketServidor;
-
-    /**
-     * Control de luchadores.
-     */
     private ControlLuchador controlLuchador;
 
     /**
-     * Constructor de SrvControlPrincipal. Crea todos los controles secundarios
-     * e inicializa la vista.
+     * Constructor de SrvControlPrincipal.
      */
     public SrvControlPrincipal() {
         this.controlLuchador = new ControlLuchador(this);
-        this.controlDojo = new ControlDojo(this);
         this.srvControlVista = new SrvControlVista(this);
+
+        // Crear ControlDojo DESPUÉS de SrvControlVista para obtener PanelDojo
+        PanelDojo panelDojo = obtenerPanelDojo();
+        this.controlDojo = new ControlDojo(this, panelDojo);
+
         this.controlSocketServidor = new ControlSocketServidor(this);
         seleccionarProperties();
     }
 
     /**
-     * Carga el archivo de propiedades del servidor y configura las conexiones.
+     * Obtiene el panel dojo de la vista. SOLO para inicializar ControlDojo.
+     *
+     * @return panel dojo
+     */
+    private PanelDojo obtenerPanelDojo() {
+        // Implementar mediante reflexión o getter en SrvControlVista
+        // Por ahora, se asume que está accesible
+        return null; // TODO: Implementar correctamente
+    }
+
+    /**
+     * Carga el archivo de propiedades del servidor.
      */
     public void seleccionarProperties() {
         try {
@@ -64,7 +64,7 @@ public class SrvControlPrincipal {
     }
 
     /**
-     * Registra un luchador — delega a ControlLuchador y ControlDojo.
+     * Registra un luchador en el sistema.
      *
      * @param nombre nombre del luchador
      * @param peso peso del luchador
@@ -77,33 +77,26 @@ public class SrvControlPrincipal {
         LuchadorDTO luchador = luchadores.get(luchadores.size() - 1);
         controlDojo.agregarHilo(luchador.getIdLuchador(), hilo);
 
-        // Pasar solo string a la vista
+        // SOLO STRINGS para la vista
         String nombreLuchador = nombre + " (" + peso + " kg)";
         srvControlVista.agregarLuchadorALista(nombreLuchador);
 
-        // Habilitar botón si tenemos 6 o más luchadores
+        // Habilitar botón si hay 6 o más
         if (luchadores.size() >= 6) {
             srvControlVista.habilitarBotonCombate();
         }
     }
 
     /**
-     * Habilita el botón de combate en la vista.
-     */
-    public void habilitarCombate() {
-        srvControlVista.habilitarBotonCombate();
-    }
-
-    /**
-     * Inicia el torneo delegando a ControlDojo.
+     * Inicia el torneo.
      */
     public void iniciarTorneo() {
-        srvControlVista.cambiarAlPanelCombate();  // ← Cambiar al panel de combate
+        srvControlVista.cambiarAlPanelCombate();
         controlDojo.iniciarTorneo(controlLuchador.getLuchadores());
     }
 
     /**
-     * Suma una victoria al luchador — delega a ControlLuchador.
+     * Suma una victoria al luchador.
      *
      * @param luchador luchador ganador
      */
@@ -112,27 +105,26 @@ public class SrvControlPrincipal {
     }
 
     /**
-     * Consulta un luchador en BD — delega a ControlLuchador.
+     * Consulta un luchador en BD.
      *
      * @param id ID del luchador
-     * @return LuchadorDTO con datos frescos de BD
+     * @return luchador con datos frescos
      */
     public LuchadorDTO consultarLuchador(int id) {
         return controlLuchador.consultarLuchadorEnBD(id);
     }
 
     /**
-     * Finaliza el combate — escribe RAF y notifica a los clientes.
+     * Finaliza el combate, escribe RAF y notifica a clientes.
      *
-     * @param ganador luchador ganador con datos frescos de BD
-     * @param perdedor luchador perdedor con datos frescos de BD
+     * @param ganador ganador del combate
+     * @param perdedor perdedor del combate
      */
     public void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
         try {
             RAFDAO.escribirResultado(ganador, "GANO");
             RAFDAO.escribirResultado(perdedor, "PERDIO");
 
-            // Enviar resultado al ganador y perdedor
             HiloLuchador hiloGanador = controlDojo.getHilos().get(ganador.getIdLuchador());
             HiloLuchador hiloPerdedor = controlDojo.getHilos().get(perdedor.getIdLuchador());
 
@@ -149,7 +141,7 @@ public class SrvControlPrincipal {
     }
 
     /**
-     * Lee el archivo RAF y muestra los resultados por consola.
+     * Muestra el archivo final de resultados.
      */
     public void mostrarArchivoFinal() {
         try {
@@ -160,20 +152,34 @@ public class SrvControlPrincipal {
     }
 
     /**
-     * Actualiza el panel del dojo en la vista.
+     * Actualiza el combate en la vista.
      *
-     * @param mensaje mensaje a mostrar
+     * @param mensaje mensaje
      */
     public void actualizarCombate(String mensaje) {
         srvControlVista.actualizarCombate(mensaje);
     }
 
     /**
-     * Muestra un mensaje de error en la vista.
+     * Muestra un error en la vista (JOptionPane).
      *
      * @param mensaje mensaje de error
      */
     public void mostrarError(String mensaje) {
         srvControlVista.mostrarError(mensaje);
+    }
+
+    /**
+     * Muestra el panel de combate.
+     */
+    public void mostrarPanelCombate() {
+        srvControlVista.cambiarAlPanelCombate();
+    }
+
+    /**
+     * Habilita el botón de combate cuando hay 6 o más luchadores.
+     */
+    public void habilitarCombate() {
+        srvControlVista.habilitarBotonCombate();
     }
 }
