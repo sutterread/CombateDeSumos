@@ -29,9 +29,14 @@ public class HiloLuchador implements Runnable {
      * Stream de salida al cliente.
      */
     private DataOutputStream output;
+    
+    /**
+     * Bandera para controlar si el hilo está activo
+     */
+    private boolean activo = true;
 
     /**
-     * Constructor de SHiloLuchador.
+     * Constructor de HiloLuchador.
      *
      * @param socket socket del cliente conectado
      * @param srvControlPrincipal referencia al control principal del servidor
@@ -59,15 +64,23 @@ public class HiloLuchador implements Runnable {
                 tecnicas[i] = input.readUTF();
             }
 
-            // pasar datos al SControlPrincipal
+            System.out.println("Luchador registrado: " + nombre + " (" + peso + " kg)");
+            
+            // Pasar datos al SrvControlPrincipal
             srvControlPrincipal.registrarLuchador(nombre, peso, tecnicas, this);
 
-            // Fase 2 — esperar resultado
+            // Fase 2 — esperar resultado (será desbloqueado por enviarResultado())
             synchronized (this) {
-                wait();
+                while (activo) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
             }
 
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             Thread.currentThread().interrupt();
         } finally {
             cerrarConexion();
@@ -75,7 +88,7 @@ public class HiloLuchador implements Runnable {
     }
 
     /**
-     * Envía el resultado del combate al cliente.
+     * Envía el resultado del combate al cliente y despierta el hilo.
      *
      * @param resultado "GANASTE" o "PERDISTE"
      */
@@ -83,6 +96,13 @@ public class HiloLuchador implements Runnable {
         try {
             output.writeUTF(resultado);
             output.flush();
+            System.out.println("Resultado enviado: " + resultado);
+            
+            // Marcar como inactivo y despertar el wait()
+            synchronized (this) {
+                activo = false;
+                notifyAll();  // ← CRÍTICO: Despierta el wait() del hilo
+            }
         } catch (IOException e) {
             throw new RuntimeException("Error al enviar resultado al cliente", e);
         }
@@ -102,6 +122,7 @@ public class HiloLuchador implements Runnable {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
+            System.out.println("Conexión cerrada");
         } catch (IOException e) {
         }
     }

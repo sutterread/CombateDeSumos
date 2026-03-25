@@ -9,28 +9,36 @@ import pa.combatedesumos.Servidor.Modelo.DAO.RAFDAO;
 import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
 
 /**
- * Control principal del servidor. Coordina todos los controles secundarios
- * y actúa como punto central de comunicación entre ellos.
+ * Control principal del servidor. Coordina todos los controles secundarios y
+ * actúa como punto central de comunicación entre ellos.
  *
  * @author Asus
  */
 public class SrvControlPrincipal {
 
-    /** Control de la vista del servidor. */
+    /**
+     * Control de la vista del servidor.
+     */
     private SrvControlVista srvControlVista;
 
-    /** Control del dojo. */
+    /**
+     * Control del dojo.
+     */
     private ControlDojo controlDojo;
 
-    /** Control del servidor socket. */
+    /**
+     * Control del servidor socket.
+     */
     private ControlSocketServidor controlSocketServidor;
 
-    /** Control de luchadores. */
+    /**
+     * Control de luchadores.
+     */
     private ControlLuchador controlLuchador;
 
     /**
-     * Constructor de SrvControlPrincipal.
-     * Crea todos los controles secundarios e inicializa la vista.
+     * Constructor de SrvControlPrincipal. Crea todos los controles secundarios
+     * e inicializa la vista.
      */
     public SrvControlPrincipal() {
         this.controlLuchador = new ControlLuchador(this);
@@ -58,17 +66,25 @@ public class SrvControlPrincipal {
     /**
      * Registra un luchador — delega a ControlLuchador y ControlDojo.
      *
-     * @param nombre   nombre del luchador
-     * @param peso     peso del luchador
+     * @param nombre nombre del luchador
+     * @param peso peso del luchador
      * @param tecnicas técnicas del luchador
-     * @param hilo     hilo del luchador
+     * @param hilo hilo del luchador
      */
     public void registrarLuchador(String nombre, double peso, String[] tecnicas, HiloLuchador hilo) {
         controlLuchador.insertarLuchadorEnBD(nombre, peso, tecnicas);
         List<LuchadorDTO> luchadores = controlLuchador.getLuchadores();
         LuchadorDTO luchador = luchadores.get(luchadores.size() - 1);
         controlDojo.agregarHilo(luchador.getIdLuchador(), hilo);
-        srvControlVista.actualizarLuchadores(luchadores);
+
+        // Pasar solo string a la vista
+        String nombreLuchador = nombre + " (" + peso + " kg)";
+        srvControlVista.agregarLuchadorALista(nombreLuchador);
+
+        // Habilitar botón si tenemos 6 o más luchadores
+        if (luchadores.size() >= 6) {
+            srvControlVista.habilitarBotonCombate();
+        }
     }
 
     /**
@@ -82,6 +98,7 @@ public class SrvControlPrincipal {
      * Inicia el torneo delegando a ControlDojo.
      */
     public void iniciarTorneo() {
+        srvControlVista.cambiarAlPanelCombate();  // ← Cambiar al panel de combate
         controlDojo.iniciarTorneo(controlLuchador.getLuchadores());
     }
 
@@ -107,15 +124,25 @@ public class SrvControlPrincipal {
     /**
      * Finaliza el combate — escribe RAF y notifica a los clientes.
      *
-     * @param ganador  luchador ganador con datos frescos de BD
+     * @param ganador luchador ganador con datos frescos de BD
      * @param perdedor luchador perdedor con datos frescos de BD
      */
     public void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
         try {
             RAFDAO.escribirResultado(ganador, "GANO");
             RAFDAO.escribirResultado(perdedor, "PERDIO");
-            controlDojo.getHilos().get(ganador.getIdLuchador()).enviarResultado("GANASTE");
-            controlDojo.getHilos().get(perdedor.getIdLuchador()).enviarResultado("PERDISTE");
+
+            // Enviar resultado al ganador y perdedor
+            HiloLuchador hiloGanador = controlDojo.getHilos().get(ganador.getIdLuchador());
+            HiloLuchador hiloPerdedor = controlDojo.getHilos().get(perdedor.getIdLuchador());
+
+            if (hiloGanador != null) {
+                hiloGanador.enviarResultado("GANASTE");
+            }
+            if (hiloPerdedor != null) {
+                hiloPerdedor.enviarResultado("PERDISTE");
+            }
+
         } catch (IOException e) {
             mostrarError("Error al finalizar combate: " + e.getMessage());
         }

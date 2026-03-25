@@ -24,6 +24,17 @@ public class PanelDojo extends javax.swing.JPanel {
         initComponents();
     }
     
+    /**
+ * Actualiza el mensaje de estado del combate
+ * @param mensaje mensaje a mostrar
+ */
+public void actualizarMensaje(String mensaje) {
+    SwingUtilities.invokeLater(() -> {
+        // Aquí puedes actualizar componentes del panel si es necesario
+        System.out.println(mensaje);
+    });
+}
+    
     public boolean cargarGifAleatorio() {
 
     // 1. Buscar los GIFs en la carpeta IMGS/GIFS

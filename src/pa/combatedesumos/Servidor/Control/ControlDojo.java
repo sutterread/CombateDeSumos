@@ -52,27 +52,34 @@ public class ControlDojo {
     }
 
     /**
-     * Primero valida si hay 6 luchadores para pelear Selecciona los dos
-     * luchadores y ejecuta el combate entre ellos
+     * Primero valida si hay 6 luchadores para pelear. Selecciona los dos
+     * luchadores y ejecuta el combate entre ellos.
+     * FLUJO CORRECTO:
+     * - Selecciona 2 de 6 luchadores al azar
+     * - Ganador pelea con otro al azar de los 4 restantes
+     * - Ganador de ese pelea con otro al azar de los 3 restantes
+     * - Y así sucesivamente hasta que no haya pendientes
      *
-     * @param luchadores
+     * @param luchadores lista de luchadores registrados
      */
     public void iniciarTorneo(List<LuchadorDTO> luchadores) {
         if (luchadores.size() < 6) {
-            srvControlPrincipal.mostrarError("Se necesitam minimo 6 luchadores para iniciar");
+            srvControlPrincipal.mostrarError("Se necesitan mínimo 6 luchadores para iniciar");
             return;
         }
+        // Copiar lista para no modificar la original
         pendientes = new ArrayList<>(luchadores);
 
+        // Primer combate: dos luchadores seleccionados al azar
         LuchadorDTO a = seleccionarLuchador();
         LuchadorDTO b = seleccionarLuchador();
         ejecutarCombate(a, b);
     }
 
     /**
-     * Selecciona un luchador dentro de la lista
+     * Selecciona un luchador dentro de la lista de pendientes y lo quita
      *
-     * @return borra el luchador seleccionado
+     * @return luchador seleccionado al azar (removido de la lista)
      */
     private LuchadorDTO seleccionarLuchador() {
         int indice = random.nextInt(pendientes.size());
@@ -80,11 +87,11 @@ public class ControlDojo {
     }
 
     /**
-     * Ejecuta el combate entre los luchadores seleccionados ejecutando kimaries
+     * Ejecuta el combate entre los luchadores seleccionados ejecutando kimarites
      * y variando sus turnos
      *
-     * @param Luchador a
-     * @param Luchador b
+     * @param a Luchador A
+     * @param b Luchador B
      */
     public synchronized void ejecutarCombate(LuchadorDTO a, LuchadorDTO b) {
         srvControlPrincipal.actualizarCombate("Combate: " + a.getNombre() + " vs " + b.getNombre());
@@ -116,47 +123,45 @@ public class ControlDojo {
     /**
      * Ejecuta un kimarite aleatorio del arreglo de kimarites del luchador
      *
-     * @param luchador
-     * @return Probabilidad
+     * @param luchador luchador que ataca
+     * @return true si el luchador se mantiene dentro, false si lo sacan del dohyō
      */
     private boolean ejecutarKimarite(LuchadorDTO luchador) {
         String[] kimarites = luchador.getKimarites();
         String kimarite = kimarites[random.nextInt(kimarites.length)];
         srvControlPrincipal.actualizarCombate(luchador.getNombre() + " usa: " + kimarite);
 
-        //80% DE PROBABILIDAD DE NO SACAR, 20% DE SACAR
+        // 80% DE PROBABILIDAD DE NO SACAR, 20% DE SACAR
         return random.nextInt(100) >= 20;
     }
 
     /**
-     * Delega a cp para sumar una victoria aal ganador obtiene la pk de cada
-     * luchador el ganador y el perdedor delega a cp para terminar el combate
+     * Finaliza el combate actual. Si hay luchadores pendientes, el ganador
+     * pelea contra el siguiente. Si no hay pendientes, termina el torneo.
      *
-     * Realiza el siguiente combate Delega a cp para mostrarelRAF final
-     *
-     * @param ganador
-     * @param perdedor
+     * @param ganador ganador del combate
+     * @param perdedor perdedor del combate
      */
     private void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
-        // actualizar victorias
+        // Actualizar victorias en BD
         srvControlPrincipal.sumarVictoria(ganador);
 
-        // consultar datos frescos de BD
+        // Consultar datos frescos de BD
         LuchadorDTO ganadorBD = srvControlPrincipal.consultarLuchador(ganador.getIdLuchador());
         LuchadorDTO perdedorBD = srvControlPrincipal.consultarLuchador(perdedor.getIdLuchador());
 
-        // escribir RAF y notificar — todo delegado a SControlPrincipal
+        // Escribir RAF y notificar a ambos luchadores
         srvControlPrincipal.finalizarCombate(ganadorBD, perdedorBD);
 
-        // siguiente combate
-        ganadorActual = ganador;
+        // Siguiente combate
         if (!pendientes.isEmpty()) {
+            // Ganador pelea contra el siguiente de la lista
             LuchadorDTO siguiente = seleccionarLuchador();
-            ejecutarCombate(ganadorActual, siguiente);
+            ejecutarCombate(ganador, siguiente);
         } else {
+            // No hay más luchadores, mostrar resultados finales
             srvControlPrincipal.mostrarArchivoFinal();
         }
-
     }
 
     /**
