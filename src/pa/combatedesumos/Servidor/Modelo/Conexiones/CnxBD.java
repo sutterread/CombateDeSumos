@@ -8,28 +8,32 @@ import java.util.Properties;
 
 /**
  * Clase encargada de gestionar la conexión con la base de datos.
- *
- * Permite cargar las credenciales desde un archivo {@code .properties}
- * y establecer una conexión utilizando {@link DriverManager}.
- *
- * Las credenciales se almacenan en atributos estáticos para que puedan
- * ser utilizadas en cualquier parte de la aplicación.
+ * Implementa el patrón Singleton con doble verificación para garantizar
+ * una única conexión reutilizable a lo largo de toda la aplicación.
  *
  * @author Asus
  */
 public class CnxBD {
 
-    /**Conexión actual con la base de datos.*/
+    /** Conexión única con la base de datos (Singleton). */
     private static Connection cn = null;
 
-    /**URL de conexión a la base de datos.*/
+    /** Lock para sincronización al crear la conexión. */
+    private static final Object lock = new Object();
+
+    /** URL de conexión a la base de datos. */
     private static String URLDB = null;
 
-    /**Usuario de la base de datos.*/
+    /** Usuario de la base de datos. */
     private static String usuario = null;
 
-    /**Contraseña del usuario de la base de datos.*/
+    /** Contraseña del usuario de la base de datos. */
     private static String contrasena = null;
+
+    /**
+     * Constructor privado — esta clase no se instancia.
+     */
+    private CnxBD() {}
 
     /**
      * Carga las credenciales de conexión desde un archivo {@code .properties}.
@@ -41,8 +45,7 @@ public class CnxBD {
      * <li>{@code db.contrasena}</li>
      * </ul>
      *
-     * @param rutaProperties ruta del archivo {@code .properties} que contiene
-     * las credenciales de la base de datos
+     * @param rutaProperties ruta del archivo {@code .properties}
      * @throws RuntimeException si ocurre un error al leer el archivo
      */
     public static void cargarCredenciales(String rutaProperties) {
@@ -58,16 +61,21 @@ public class CnxBD {
     }
 
     /**
-     * Establece y retorna una conexión con la base de datos utilizando
-     * las credenciales previamente cargadas.
+     * Retorna la conexión Singleton con la base de datos.
+     * Si la conexión no existe o está cerrada la crea usando doble verificación.
      *
-     * @return objeto {@link Connection} que representa la conexión con
-     * la base de datos
+     * @return objeto {@link Connection} listo para su uso
      * @throws RuntimeException si ocurre un error al establecer la conexión
      */
     public static Connection getConexion() {
         try {
-            cn = DriverManager.getConnection(URLDB, usuario, contrasena);
+            if (cn == null || cn.isClosed()) {
+                synchronized (lock) {
+                    if (cn == null || cn.isClosed()) {
+                        cn = DriverManager.getConnection(URLDB, usuario, contrasena);
+                    }
+                }
+            }
         } catch (SQLException ex) {
             throw new RuntimeException("No se puede establecer la conexión con la base de datos", ex);
         }
@@ -75,18 +83,18 @@ public class CnxBD {
     }
 
     /**
-     * Cierra la conexión actual con la base de datos si existe.
-     *
-     * Si la conexión está abierta, se invoca el método {@link Connection#close()}
-     * para liberar los recursos asociados.
+     * Cierra la conexión actual con la base de datos si está abierta.
      */
     public static void desconectar() {
-        try {
-            if (cn != null) {
-                cn.close();
+        synchronized (lock) {
+            try {
+                if (cn != null && !cn.isClosed()) {
+                    cn.close();
+                }
+                cn = null;
+            } catch (SQLException e) {
+                // Liberación de recursos — no se propaga
             }
-        } catch (SQLException e) {
-            // No se propaga la excepción porque el cierre es un proceso de liberación de recursos
         }
     }
 }

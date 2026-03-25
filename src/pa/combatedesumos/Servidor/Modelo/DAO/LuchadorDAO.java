@@ -94,14 +94,6 @@ public class LuchadorDAO implements ILuchadorDAO {
                 pst.close();
             } catch (SQLException e) {
             }
-            if (con != null) try {
-                con.close();
-            } catch (SQLException e) {
-            }
-            if (con != null) try {
-                con.close();
-            } catch (SQLException e) {
-            }
         }
     }
 

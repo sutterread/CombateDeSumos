@@ -161,6 +161,20 @@ public class ControlVista implements ActionListener {
     }
 
     /**
+     * Cambia la vista al panel de espera (esperando inicio del combate).
+     */
+    public void mostrarPanelEspera() {
+        cambiarPanel(panelEspera);
+    }
+
+    /**
+     * Cambia la vista al panel de combatiendo (cuando el combate está activo).
+     */
+    public void mostrarPanelCombatiendo() {
+        cambiarPanel(panelCombatiendo);
+    }
+
+    /**
      * Muestra un mensaje de advertencia al usuario.
      *
      * @param mensaje texto de advertencia

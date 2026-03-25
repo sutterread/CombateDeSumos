@@ -1,10 +1,15 @@
 package pa.combatedesumos.Cliente.Control;
 
 import java.io.IOException;
+import javax.swing.SwingUtilities;
 import pa.combatedesumos.Cliente.Modelo.CnxProperties;
 import pa.combatedesumos.Cliente.Modelo.CnxSocket;
 
-
+/**
+ * Control principal del cliente. Coordina la vista y el control de socket.
+ *
+ * @author Asus
+ */
 public class ControlPrincipal {
 
     private ControlVista cControlVista;
@@ -12,16 +17,16 @@ public class ControlPrincipal {
 
     private String[] tecnicasSeleccionadas;
     private String rutaProperties;
-    private ControlVista controlVista;
-    private ControlSocketCliente controlSocketCliente;
 
+    /**
+     * Constructor de ControlPrincipal. Inicializa la vista y el control de socket.
+     */
     public ControlPrincipal() {
         cControlVista = new ControlVista(this);
         controlCliente = new ControlSocketCliente(this);
         cControlVista.mostrarVentana();
     }
-    
-    
+
     /**
      * Solicita al usuario seleccionar el properties, carga la configuracion
      * del socket y las categorias disponibles.
@@ -39,7 +44,7 @@ public class ControlPrincipal {
             }
         }
     }
- 
+
     /**
      * Carga las categorias disponibles y las muestra en la vista.
      *
@@ -53,7 +58,7 @@ public class ControlPrincipal {
             cControlVista.mostrarAdvertencia("Error al cargar las categorias.");
         }
     }
- 
+
     /**
      * Carga los kimarites de una categoria y los muestra en la vista.
      *
@@ -68,7 +73,7 @@ public class ControlPrincipal {
             cControlVista.mostrarAdvertencia("Error al cargar los kimarites.");
         }
     }
- 
+
     /**
      * Guarda las tecnicas seleccionadas por el luchador.
      *
@@ -77,10 +82,12 @@ public class ControlPrincipal {
     public void confirmarTecnicas(String[] tecnicas) {
         this.tecnicasSeleccionadas = tecnicas;
     }
- 
+
     /**
-     * Valida los datos, conecta al servidor y envia al luchador.
-     * Nota: V2 no tiene campo combatesGanados, se omite en el envio.
+     * Valida los datos, envia al luchador al servidor y luego espera el
+     * resultado del combate en un hilo de fondo para no bloquear la UI.
+     * Cambia al PanelEspera tras recibir la confirmación y al
+     * PanelCombatiendo cuando llega el resultado final.
      *
      * @param nombre nombre del luchador
      * @param peso   peso del luchador (String a convertir)
@@ -94,25 +101,35 @@ public class ControlPrincipal {
             cControlVista.mostrarAdvertencia("Debe completar todos los campos.");
             return;
         }
+        float pesoFloat;
         try {
-            float pesoFloat = Float.parseFloat(peso);
-            controlCliente.enviarLuchador(nombre, pesoFloat, tecnicasSeleccionadas);
-            String resultado = esperarResultado();
-            cControlVista.mostrarResultado(resultado);
+            pesoFloat = Float.parseFloat(peso);
         } catch (NumberFormatException e) {
             cControlVista.mostrarAdvertencia("El peso debe ser un numero decimal (ej: 95.5).");
+            return;
+        }
+        try {
+            // Enviar datos y recibir confirmación "RECIBIDO" (sincrónico)
+            controlCliente.enviarLuchador(nombre, pesoFloat, tecnicasSeleccionadas);
+            // Datos recibidos correctamente — mostrar pantalla de espera
+            cControlVista.mostrarPanelEspera();
         } catch (IOException e) {
             cControlVista.mostrarAdvertencia("Error de conexion con el servidor.");
+            return;
         }
-    }
- 
-    /**
-     * Espera y retorna el resultado del combate enviado por el servidor.
-     *
-     * @return "GANASTE" o "PERDISTE"
-     * @throws IOException si hay error de conexion
-     */
-    public String esperarResultado() throws IOException {
-        return controlCliente.getInputStream().readUTF();
+        // Esperar resultado del combate en hilo de fondo (no bloquea la UI)
+        new Thread(() -> {
+            try {
+                String resultado = controlCliente.getInputStream().readUTF();
+                SwingUtilities.invokeLater(() -> {
+                    cControlVista.mostrarPanelCombatiendo();
+                    cControlVista.mostrarResultado(resultado);
+                });
+            } catch (IOException ex) {
+                SwingUtilities.invokeLater(() ->
+                    cControlVista.mostrarAdvertencia("Se perdió la conexión con el servidor.")
+                );
+            }
+        }, "HiloEsperaResultado").start();
     }
 }

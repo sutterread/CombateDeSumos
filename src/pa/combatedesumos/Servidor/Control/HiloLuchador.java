@@ -41,13 +41,17 @@ public class HiloLuchador implements Runnable {
 
             // Fase 1 — recibir datos del cliente
             String nombre = input.readUTF();
-            double peso = input.readDouble();
+            float peso = input.readFloat();
             int cantidadTecnicas = input.readInt();
             String[] tecnicas = new String[cantidadTecnicas];
             
             for (int i = 0; i < cantidadTecnicas; i++) {
                 tecnicas[i] = input.readUTF();
             }
+
+            // Confirmar recepción al cliente antes de registrar
+            output.writeUTF("RECIBIDO");
+            output.flush();
 
             // Registrar luchador (SIN System.out)
             srvControlPrincipal.registrarLuchador(nombre, peso, tecnicas, this);
