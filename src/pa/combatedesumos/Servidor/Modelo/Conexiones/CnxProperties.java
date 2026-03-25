@@ -31,7 +31,7 @@ public class CnxProperties {
      * @param ruta
      * @throws IOException
      */
-    public static void cargaConfioguracion(String ruta) throws IOException{
+    public static void cargaConfiguracion(String ruta) throws IOException{
         Properties props = cargarProps(ruta);
         puerto = Integer.parseInt(props.getProperty("PUERTO_SERVIDOR"));
     }

@@ -1,10 +1,8 @@
 package pa.combatedesumos.Servidor.Modelo.DAO;
 
-import java.awt.List;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
 import pa.combatedesumos.Servidor.Modelo.Conexiones.CnxRAF;
 import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
 
@@ -13,8 +11,14 @@ import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
  * @author Sergio Vanegas
  */
 public class RAFDAO {
+    
     private File archivo;
     
+    /**
+     * Añade un luchador al RAF es decir un registro
+     * @param luchador
+     * @param resultado
+     */
     public void añadirLuchador(LuchadorDTO luchador, String resultado) {
         try {
             RandomAccessFile raf = CnxRAF.conexion();
@@ -28,6 +32,9 @@ public class RAFDAO {
         }
     }
     
+    /**
+     * Separadorcito 
+     */
     public void escribirSeparador() {
         try {
             RandomAccessFile raf = CnxRAF.conexion();
