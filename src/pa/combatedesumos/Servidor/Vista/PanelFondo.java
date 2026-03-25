@@ -1,7 +1,9 @@
 package pa.combatedesumos.Servidor.Vista;
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -54,10 +56,12 @@ public class PanelFondo extends JPanel {
     }
 
     /**
-     * Dibuja la imagen de fondo dentro del panel.
+     * Dibuja la imagen de fondo dentro del panel con alta calidad.
      *
      * Este método sobrescribe el comportamiento de JPanel para renderizar la
-     * imagen escalada al tamaño actual del panel.
+     * imagen escalada al tamaño actual del panel. Se utilizan RenderingHints
+     * para garantizar interpolación bicúbica, evitando pérdida de calidad
+     * al reducir imágenes más grandes que el panel.
      *
      * @param g objeto Graphics utilizado para realizar el dibujo.
      */
@@ -65,7 +69,22 @@ public class PanelFondo extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (imagen != null) {
-            g.drawImage(
+            Graphics2D g2d = (Graphics2D) g;
+
+            g2d.setRenderingHint(
+                    RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC
+            );
+            g2d.setRenderingHint(
+                    RenderingHints.KEY_RENDERING,
+                    RenderingHints.VALUE_RENDER_QUALITY
+            );
+            g2d.setRenderingHint(
+                    RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON
+            );
+
+            g2d.drawImage(
                     imagen,
                     0, 0,
                     getWidth(),

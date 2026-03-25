@@ -41,7 +41,7 @@ public class PanelEspera extends javax.swing.JPanel {
                 jButton1SalirActionPerformed(evt);
             }
         });
-        add(jButton1Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 350, 60, 40));
+        add(jButton1Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 350, 90, 40));
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
