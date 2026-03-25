@@ -72,7 +72,7 @@ public class ControlLuchador {
      * @param peso      peso del luchador
      * @param kimarites técnicas del luchador
      */
-    public void insertarLuchadorEnBD(String nombre, double peso, String[] kimarites) {
+    public void insertarLuchadorEnBD(String nombre, float peso, String[] kimarites) {
         try {
             LuchadorDTO luchador = new LuchadorDTO(nombre, peso, 0, kimarites);
             ldao.insertarLuchador(luchador);

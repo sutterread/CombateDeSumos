@@ -59,3 +59,23 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+-- Tabla de resultados de combate
+-- --------------------------------------------------------
+
+CREATE TABLE `combate_resultado` (
+  `id_combate` int(11) NOT NULL AUTO_INCREMENT,
+  `id_ganador` int(11) NOT NULL,
+  `id_perdedor` int(11) NOT NULL,
+  `fecha_combate` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id_combate`),
+  INDEX `idx_ganador` (`id_ganador`),
+  INDEX `idx_perdedor` (`id_perdedor`),
+  CONSTRAINT `fk_ganador` FOREIGN KEY (`id_ganador`) REFERENCES `luchador` (`id_luchador`),
+  CONSTRAINT `fk_perdedor` FOREIGN KEY (`id_perdedor`) REFERENCES `luchador` (`id_luchador`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Índices adicionales en tabla luchador para mejorar rendimiento
+CREATE INDEX `idx_nombre` ON `luchador` (`nombre`);
+CREATE INDEX `idx_victorias` ON `luchador` (`victorias`);

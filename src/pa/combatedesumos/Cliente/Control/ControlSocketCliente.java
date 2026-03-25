@@ -3,42 +3,40 @@ package pa.combatedesumos.Cliente.Control;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import pa.combatedesumos.Cliente.Modelo.CnxSocket;
 
 /**
  * Control encargado de manejar la comunicacion del cliente con el socket.
  * Envia los datos del luchador y espera el resultado del combate.
- * 
+ *
  * @author Asus
  */
 public class ControlSocketCliente {
 
-    private CnxSocket cnxSocket;
     private ControlPrincipal ccp;
+    /** Stream de entrada reutilizable para el mismo socket. */
+    private DataInputStream dis;
 
     /**
-     * Constructor de ControlSocketCliente
+     * Constructor de ControlSocketCliente.
      *
-     * @param ccp
+     * @param ccp control principal del cliente
      */
     public ControlSocketCliente(ControlPrincipal ccp) {
         this.ccp = ccp;
-        this.cnxSocket = new CnxSocket();
     }
 
     /**
-     * Envia los datos del luchador al servidor por el socket
+     * Envia los datos del luchador al servidor por el socket y espera la
+     * confirmacion "RECIBIDO" antes de retornar.
      *
-     * @param nombre
-     * @param peso
-     * @param kimarites
-     * @throws java.io.IOException
+     * @param nombre    nombre del luchador
+     * @param peso      peso del luchador (float)
+     * @param kimarites tecnicas seleccionadas
+     * @throws IOException si hay error de conexion o confirmacion inesperada
      */
     public void enviarLuchador(String nombre, float peso, String[] kimarites) throws IOException {
-
-        Socket socket = cnxSocket.conexion();
-        DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+        DataOutputStream dos = new DataOutputStream(CnxSocket.conexion().getOutputStream());
 
         dos.writeUTF(nombre);
         dos.writeFloat(peso);
@@ -50,16 +48,24 @@ public class ControlSocketCliente {
 
         dos.flush();
 
+        // Esperar confirmacion del servidor
+        String confirmacion = getInputStream().readUTF();
+        if (!"RECIBIDO".equals(confirmacion)) {
+            throw new IOException("Confirmacion inesperada del servidor: " + confirmacion);
+        }
     }
 
     /**
-     * Retorna el input stream del socket
+     * Retorna el DataInputStream del socket, reutilizando la misma instancia.
      *
      * @return DataInputStream del socket
-     * @throws IOException si hay error
+     * @throws IOException si hay error al obtener el stream
      */
     public DataInputStream getInputStream() throws IOException {
-        return new DataInputStream(cnxSocket.conexion().getInputStream());
+        if (dis == null) {
+            dis = new DataInputStream(CnxSocket.conexion().getInputStream());
+        }
+        return dis;
     }
 
 }

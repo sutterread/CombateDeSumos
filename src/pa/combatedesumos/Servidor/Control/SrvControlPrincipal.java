@@ -71,7 +71,7 @@ public class SrvControlPrincipal {
      * @param tecnicas técnicas del luchador
      * @param hilo hilo del luchador
      */
-    public void registrarLuchador(String nombre, double peso, String[] tecnicas, HiloLuchador hilo) {
+    public void registrarLuchador(String nombre, float peso, String[] tecnicas, HiloLuchador hilo) {
         controlLuchador.insertarLuchadorEnBD(nombre, peso, tecnicas);
         List<LuchadorDTO> luchadores = controlLuchador.getLuchadores();
         LuchadorDTO luchador = luchadores.get(luchadores.size() - 1);
