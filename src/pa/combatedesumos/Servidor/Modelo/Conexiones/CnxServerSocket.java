@@ -49,7 +49,7 @@ public class CnxServerSocket {
             try {
                 serverSocket.close();
             } catch (IOException ignored) {
-                
+                //liberacion de recursos
             }
         }
     }
