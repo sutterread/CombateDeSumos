@@ -2,6 +2,8 @@ package pa.combatedesumos.Servidor.Control;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
+import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
 import pa.combatedesumos.Servidor.Vista.SeleccionarArchivo;
 
 /**
@@ -38,6 +40,26 @@ public class SrvControlVista implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         
+    }
+
+    String seleccionarArchivo(String seleccione_servidorproperties) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    void actualizarLuchadores(List<LuchadorDTO> luchadores) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    void habilitarBotonCombate() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    void actualizarCombate(String mensaje) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    void mostrarError(String mensaje) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

@@ -96,8 +96,8 @@ public class HiloLuchador implements Runnable {
             if (input != null) {
                 input.close();
             }
-            if (input != null) {
-                input.close();
+            if (output != null) {
+                output.close();
             }
             if (socket != null && !socket.isClosed()) {
                 socket.close();
