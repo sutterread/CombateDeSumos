@@ -9,20 +9,17 @@ import pa.combatedesumos.Servidor.Vista.SeleccionarArchivo;
 
 /**
  * Controlador de vista del servidor. Gestiona los eventos de la interfaz
- * grafica y delega las operaciones al control principal.
+ * gráfica y delega las operaciones al control principal.
+ * NO CONTIENE LÓGICA DE NEGOCIO NI OBJETOS DEL MODELO.
  *
  * @author Asus
  */
 public class SrvControlVista implements ActionListener {
 
-    /**
-     * Control principal del servidor
-     */
     private SrvControlPrincipal controlPrincipal;
     private PanelInscritos panelInscritos;
     private PanelDojo panelDojo;
     private SVentana ventana;
-
     private final SeleccionarArchivo seleccionarArchivo;
 
     /**
@@ -37,23 +34,16 @@ public class SrvControlVista implements ActionListener {
         this.panelDojo = new PanelDojo(this);
         this.ventana = new SVentana(this);
 
-        // Configurar botón del panel de inscritos
+        // Configurar botón
         panelInscritos.jButton1IrAlCombate.addActionListener(this);
         panelInscritos.jButton1IrAlCombate.setActionCommand("Ir al combate");
 
-        // Mostrar ventana con panel de inscritos
+        // Mostrar ventana inicial
         mostrarVentana();
     }
 
     /**
-     * Cambia al panel de combate cuando inicia el torneo
-     */
-    public void cambiarAlPanelCombate() {
-        cambiarPanel(panelDojo);
-    }
-
-    /**
-     * Hace visible la ventana principal
+     * Muestra la ventana principal con el panel de inscritos.
      */
     public void mostrarVentana() {
         cambiarPanel(panelInscritos);
@@ -61,7 +51,7 @@ public class SrvControlVista implements ActionListener {
     }
 
     /**
-     * Cambia el panel que se muestra actualmente
+     * Cambia el panel mostrado en la ventana.
      *
      * @param panel panel a mostrar
      */
@@ -72,23 +62,24 @@ public class SrvControlVista implements ActionListener {
     }
 
     /**
-     * Agrega un luchador a la lista de inscritos Solo recibe strings, sin DTOs
+     * Agrega un luchador a la lista de inscritos.
+     * Solo recibe strings, SIN OBJETOS DEL MODELO.
      *
-     * @param nombreLuchador nombre del luchador a agregar
+     * @param nombreLuchador nombre del luchador
      */
     public void agregarLuchadorALista(String nombreLuchador) {
         panelInscritos.agregarLuchador(nombreLuchador);
     }
 
     /**
-     * Habilita el botón de combate
+     * Habilita el botón de combate.
      */
     public void habilitarBotonCombate() {
         panelInscritos.jButton1IrAlCombate.setEnabled(true);
     }
 
     /**
-     * Actualiza el panel del dojo con un mensaje
+     * Actualiza el mensaje del combate en el panel dojo.
      *
      * @param mensaje mensaje a mostrar
      */
@@ -97,28 +88,46 @@ public class SrvControlVista implements ActionListener {
     }
 
     /**
-     * Muestra un mensaje de error en la vista.
+     * Cambia al panel de combate cuando inicia el torneo.
+     */
+    public void cambiarAlPanelCombate() {
+        cambiarPanel(panelDojo);
+    }
+
+    /**
+     * Muestra un mensaje de error al usuario.
      *
      * @param mensaje mensaje de error
      */
     public void mostrarError(String mensaje) {
-        javax.swing.JOptionPane.showMessageDialog(ventana, mensaje, "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        javax.swing.JOptionPane.showMessageDialog(
+            ventana,
+            mensaje,
+            "Error",
+            javax.swing.JOptionPane.ERROR_MESSAGE
+        );
     }
-
-    String seleccionarArchivo(String seleccione_servidorproperties) {
-        return seleccionarArchivo.seleccionarProperties(seleccione_servidorproperties);
+    
+    
+    /**
+     * Abre el selector de archivo properties.
+     *
+     * @param titulo título del diálogo
+     * @return ruta del archivo seleccionado
+     */
+    String seleccionarArchivo(String titulo) {
+        return seleccionarArchivo.seleccionarProperties(titulo);
     }
 
     /**
-     * Gestiona los eventos generados por los componentes de la interfaz
-     * grafica.
+     * Gestiona los eventos de los componentes.
      *
-     * @param e evento generado por un componente de la interfaz
+     * @param e evento generado
      */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equalsIgnoreCase("Ir al combate")) {
-            cambiarPanel(panelDojo);
+            controlPrincipal.iniciarTorneo();
         }
     }
 

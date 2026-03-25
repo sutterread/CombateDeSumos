@@ -6,33 +6,17 @@ import java.io.IOException;
 import java.net.Socket;
 
 /**
- * Hilo encargado de manejar la comunicación con un cliente luchador. Recibe los
- * datos del luchador y espera el resultado del combate.
+ * Hilo encargado de manejar la comunicación con un cliente luchador.
+ * Recibe datos del luchador, lo registra y espera el resultado del combate.
  *
- * @author
+ * @author VALEN
  */
 public class HiloLuchador implements Runnable {
 
-    /**
-     * Socket del cliente.
-     */
     private Socket socket;
-    /**
-     * Referencia al control principal del servidor.
-     */
     private SrvControlPrincipal srvControlPrincipal;
-    /**
-     * Stream de entrada del cliente.
-     */
     private DataInputStream input;
-    /**
-     * Stream de salida al cliente.
-     */
     private DataOutputStream output;
-    
-    /**
-     * Bandera para controlar si el hilo está activo
-     */
     private boolean activo = true;
 
     /**
@@ -60,16 +44,15 @@ public class HiloLuchador implements Runnable {
             double peso = input.readDouble();
             int cantidadTecnicas = input.readInt();
             String[] tecnicas = new String[cantidadTecnicas];
+            
             for (int i = 0; i < cantidadTecnicas; i++) {
                 tecnicas[i] = input.readUTF();
             }
 
-            System.out.println("Luchador registrado: " + nombre + " (" + peso + " kg)");
-            
-            // Pasar datos al SrvControlPrincipal
+            // Registrar luchador (SIN System.out)
             srvControlPrincipal.registrarLuchador(nombre, peso, tecnicas, this);
 
-            // Fase 2 — esperar resultado (será desbloqueado por enviarResultado())
+            // Fase 2 — esperar resultado
             synchronized (this) {
                 while (activo) {
                     try {
@@ -81,6 +64,8 @@ public class HiloLuchador implements Runnable {
             }
 
         } catch (IOException e) {
+            // Manejar excepción sin System.out
+            srvControlPrincipal.mostrarError("Error en comunicación con cliente: " + e.getMessage());
             Thread.currentThread().interrupt();
         } finally {
             cerrarConexion();
@@ -96,15 +81,13 @@ public class HiloLuchador implements Runnable {
         try {
             output.writeUTF(resultado);
             output.flush();
-            System.out.println("Resultado enviado: " + resultado);
-            
-            // Marcar como inactivo y despertar el wait()
+
             synchronized (this) {
                 activo = false;
-                notifyAll();  // ← CRÍTICO: Despierta el wait() del hilo
+                notifyAll();
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error al enviar resultado al cliente", e);
+            srvControlPrincipal.mostrarError("Error al enviar resultado: " + e.getMessage());
         }
     }
 
@@ -122,8 +105,8 @@ public class HiloLuchador implements Runnable {
             if (socket != null && !socket.isClosed()) {
                 socket.close();
             }
-            System.out.println("Conexión cerrada");
         } catch (IOException e) {
+            // Silenciar error de cierre
         }
     }
 }

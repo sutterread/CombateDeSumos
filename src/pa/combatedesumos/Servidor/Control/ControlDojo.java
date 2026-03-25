@@ -5,37 +5,47 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 import pa.combatedesumos.Servidor.Modelo.LuchadorDTO;
+import pa.combatedesumos.Servidor.Vista.PanelDojo;
 
 /**
- * Control encargado de gestionar la logica del combate en el dojo. Sincroniza
- * los dos hilos de los luchadores y determina el ganador.
+ * Control encargado de gestionar la lógica del combate en el dohyō.
+ * Sincroniza los hilos de los luchadores y determina el ganador basado
+ * en la ejecución de kimarites con reproducción de GIFs.
  *
  * @author Sergio, Asus
  */
 public class ControlDojo {
 
     private SrvControlPrincipal srvControlPrincipal;
+    private PanelDojo panelDojo;
 
     /**
      * Lista de luchadores pendientes por combatir.
      */
     private List<LuchadorDTO> pendientes;
-    private LuchadorDTO ganadorActual;
 
     /**
      * Mapa de hilos activos — clave: idLuchador, valor: hilo.
      */
     private Map<Integer, HiloLuchador> hilos;
     private Random random;
+    
+    /**
+     * Lock para sincronizar el turno en el dohyō
+     */
+    private final Object lockDohyo = new Object();
 
     /**
      * Constructor de ControlDojo.
      *
      * @param srvControlPrincipal control principal del servidor
+     * @param panelDojo panel donde se visualiza el combate
      */
-    public ControlDojo(SrvControlPrincipal srvControlPrincipal) {
+    public ControlDojo(SrvControlPrincipal srvControlPrincipal, PanelDojo panelDojo) {
         this.srvControlPrincipal = srvControlPrincipal;
+        this.panelDojo = panelDojo;
         this.pendientes = new ArrayList<>();
         this.hilos = new HashMap<>();
         this.random = new Random();
@@ -52,13 +62,11 @@ public class ControlDojo {
     }
 
     /**
-     * Primero valida si hay 6 luchadores para pelear. Selecciona los dos
-     * luchadores y ejecuta el combate entre ellos.
+     * Inicia el torneo validando que haya mínimo 6 luchadores.
      * FLUJO CORRECTO:
-     * - Selecciona 2 de 6 luchadores al azar
-     * - Ganador pelea con otro al azar de los 4 restantes
-     * - Ganador de ese pelea con otro al azar de los 3 restantes
-     * - Y así sucesivamente hasta que no haya pendientes
+     * - Selecciona 2 de 6 al azar
+     * - Ganador pelea con otro al azar
+     * - Continúa hasta no haber pendientes
      *
      * @param luchadores lista de luchadores registrados
      */
@@ -67,19 +75,23 @@ public class ControlDojo {
             srvControlPrincipal.mostrarError("Se necesitan mínimo 6 luchadores para iniciar");
             return;
         }
-        // Copiar lista para no modificar la original
+        
         pendientes = new ArrayList<>(luchadores);
 
         // Primer combate: dos luchadores seleccionados al azar
         LuchadorDTO a = seleccionarLuchador();
         LuchadorDTO b = seleccionarLuchador();
+        
+        // Cambiar al panel de combate
+        srvControlPrincipal.mostrarPanelCombate();
+        
         ejecutarCombate(a, b);
     }
 
     /**
-     * Selecciona un luchador dentro de la lista de pendientes y lo quita
+     * Selecciona un luchador al azar de los pendientes y lo remove.
      *
-     * @return luchador seleccionado al azar (removido de la lista)
+     * @return luchador seleccionado
      */
     private LuchadorDTO seleccionarLuchador() {
         int indice = random.nextInt(pendientes.size());
@@ -87,13 +99,15 @@ public class ControlDojo {
     }
 
     /**
-     * Ejecuta el combate entre los luchadores seleccionados ejecutando kimarites
-     * y variando sus turnos
+     * Ejecuta el combate entre dos luchadores con sincronización real.
+     * Cada turno: reproduce GIF → espera que termine → verifica resultado
      *
      * @param a Luchador A
      * @param b Luchador B
      */
-    public synchronized void ejecutarCombate(LuchadorDTO a, LuchadorDTO b) {
+    public void ejecutarCombate(LuchadorDTO a, LuchadorDTO b) {
+        // Actualizar vista con combatientes
+        panelDojo.actualizarCombatientes(a.getNombre(), b.getNombre());
         srvControlPrincipal.actualizarCombate("Combate: " + a.getNombre() + " vs " + b.getNombre());
 
         boolean dentroA = true;
@@ -102,17 +116,13 @@ public class ControlDojo {
 
         while (dentroA && dentroB) {
             if (turnoA) {
-                dentroB = ejecutarKimarite(a);
+                // Turno del luchador A
+                dentroB = ejecutarTurnoConGif(a, b);
             } else {
-                dentroA = ejecutarKimarite(b);
+                // Turno del luchador B
+                dentroA = ejecutarTurnoConGif(b, a);
             }
             turnoA = !turnoA;
-
-            try {
-                wait(500);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
         }
 
         LuchadorDTO ganador = dentroA ? a : b;
@@ -121,26 +131,62 @@ public class ControlDojo {
     }
 
     /**
-     * Ejecuta un kimarite aleatorio del arreglo de kimarites del luchador
+     * Ejecuta un turno completo: selecciona kimarite, reproduce GIF,
+     * espera que termine, y verifica si saca al oponente.
      *
-     * @param luchador luchador que ataca
-     * @return true si el luchador se mantiene dentro, false si lo sacan del dohyō
+     * @param atacante luchador que ataca
+     * @param defensor luchador que defiende
+     * @return true si el defensor se mantiene dentro, false si sale
      */
-    private boolean ejecutarKimarite(LuchadorDTO luchador) {
-        String[] kimarites = luchador.getKimarites();
-        String kimarite = kimarites[random.nextInt(kimarites.length)];
-        srvControlPrincipal.actualizarCombate(luchador.getNombre() + " usa: " + kimarite);
+    private boolean ejecutarTurnoConGif(LuchadorDTO atacante, LuchadorDTO defensor) {
+        synchronized (lockDohyo) {
+            // Seleccionar kimarite aleatorio
+            String[] kimarites = atacante.getKimarites();
+            String kimarite = kimarites[random.nextInt(kimarites.length)];
+            
+            srvControlPrincipal.actualizarCombate(
+                atacante.getNombre() + " usa: " + kimarite
+            );
 
-        // 80% DE PROBABILIDAD DE NO SACAR, 20% DE SACAR
-        return random.nextInt(100) >= 20;
+            // Crear CountDownLatch para sincronizar con el GIF
+            CountDownLatch gifTerminado = new CountDownLatch(1);
+            
+            // Reproducir GIF y esperar que termine
+            String rutaGif = "/Imgs/Gifs/Tecnicas/" + kimarite.replace(" ", "_") + ".gif";
+            panelDojo.reproducirGifYEsperar(rutaGif, () -> {
+                gifTerminado.countDown();
+            });
+
+            // Esperar a que el GIF termine
+            try {
+                gifTerminado.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // Después de que el GIF terminó, ejecutar kimarite
+            // 80% NO saca, 20% SÍ saca
+            boolean sacaDelDohyo = random.nextInt(100) < 20;
+            
+            if (sacaDelDohyo) {
+                srvControlPrincipal.actualizarCombate(
+                    defensor.getNombre() + " es sacado del dohyō!"
+                );
+                return false;  // El defensor fue sacado
+            } else {
+                srvControlPrincipal.actualizarCombate(
+                    defensor.getNombre() + " resiste en el dohyō"
+                );
+                return true;   // El defensor se mantiene dentro
+            }
+        }
     }
 
     /**
-     * Finaliza el combate actual. Si hay luchadores pendientes, el ganador
-     * pelea contra el siguiente. Si no hay pendientes, termina el torneo.
+     * Finaliza el combate actual y prepara el siguiente si hay pendientes.
      *
-     * @param ganador ganador del combate
-     * @param perdedor perdedor del combate
+     * @param ganador luchador ganador
+     * @param perdedor luchador perdedor
      */
     private void finalizarCombate(LuchadorDTO ganador, LuchadorDTO perdedor) {
         // Actualizar victorias en BD
@@ -150,16 +196,22 @@ public class ControlDojo {
         LuchadorDTO ganadorBD = srvControlPrincipal.consultarLuchador(ganador.getIdLuchador());
         LuchadorDTO perdedorBD = srvControlPrincipal.consultarLuchador(perdedor.getIdLuchador());
 
-        // Escribir RAF y notificar a ambos luchadores
+        // Escribir RAF y notificar a luchadores
         srvControlPrincipal.finalizarCombate(ganadorBD, perdedorBD);
 
         // Siguiente combate
         if (!pendientes.isEmpty()) {
-            // Ganador pelea contra el siguiente de la lista
             LuchadorDTO siguiente = seleccionarLuchador();
+            
+            // Pequeña pausa antes del próximo combate
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            
             ejecutarCombate(ganador, siguiente);
         } else {
-            // No hay más luchadores, mostrar resultados finales
             srvControlPrincipal.mostrarArchivoFinal();
         }
     }
