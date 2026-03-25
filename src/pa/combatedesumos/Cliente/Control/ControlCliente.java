@@ -7,9 +7,9 @@ import java.net.Socket;
 import pa.combatedesumos.Cliente.Modelo.CnxSocket;
 
 /**
- * Control encargado de manejar la comunicacion del cliente con el servidor.
+ * Control encargado de manejar la comunicacion del cliente con el socket.
  * Envia los datos del luchador y espera el resultado del combate.
- * PENDIENTE A ARREGLAR
+ * 
  * @author Asus
  */
 public class ControlCliente {
@@ -18,7 +18,7 @@ public class ControlCliente {
     private CControlPrincipal ccp;
 
     /**
-     * Constructor de CControlSocket
+     * Constructor de ControlSocketCliente
      *
      * @param ccp
      */
@@ -32,19 +32,16 @@ public class ControlCliente {
      *
      * @param nombre
      * @param peso
-     * @param combatesGanados
      * @param kimarites
      * @throws java.io.IOException
      */
-    public void enviarLuchador(String nombre, float peso, int combatesGanados, String[] kimarites) throws IOException {
+    public void enviarLuchador(String nombre, float peso, String[] kimarites) throws IOException {
 
         Socket socket = cnxSocket.conexion();
         DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
 
         dos.writeUTF(nombre);
         dos.writeFloat(peso);
-        //ARREGLAR ESTO DE COMBATES GANADOS 
-        dos.writeInt(combatesGanados);
         dos.writeInt(kimarites.length);
 
         for (String kimarite : kimarites) {
