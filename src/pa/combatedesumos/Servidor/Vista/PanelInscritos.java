@@ -77,6 +77,7 @@ public class PanelInscritos extends javax.swing.JPanel {
 
         SumosRegistrados = new javax.swing.JScrollPane();
         jButton1IrAlCombate = new javax.swing.JButton();
+        jPanel1 = new PanelFondo("Imgs/Servidor/PantallaPrincipal.png");
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         add(SumosRegistrados, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 200, 340, 310));
@@ -86,11 +87,13 @@ public class PanelInscritos extends javax.swing.JPanel {
         jButton1IrAlCombate.setForeground(new java.awt.Color(255, 255, 255));
         jButton1IrAlCombate.setText("¡Combatir!");
         add(jButton1IrAlCombate, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 520, 220, 60));
+        add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, 600));
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JScrollPane SumosRegistrados;
     public javax.swing.JButton jButton1IrAlCombate;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

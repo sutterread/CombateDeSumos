@@ -16,6 +16,7 @@ public class CVentana extends javax.swing.JFrame {
     public CVentana(ControlVista controlVista) {
         controlVista = this.controlVista;
         setResizable(false);
+        setLocationRelativeTo(null);
         initComponents();
     }
 
